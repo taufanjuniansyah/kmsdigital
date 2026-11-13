@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Meta Tags Dasar & SEO -->
+    <title>Kamasylvia Digital | Aplikasi Premium & Kebutuhan Digital</title>
+    <meta name="description" content="Toko digital terpercaya yang menyediakan aplikasi premium, streaming, musik, dan tools AI dengan harga terjangkau.">
+    <meta name="theme-color" content="#d946ef">
+
+    <!-- Open Graph (Preview Link WhatsApp/Telegram/Facebook) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kamasylvia Digital - Store">
+    <meta property="og:description" content="Toko digital terpercaya untuk aplikasi premium, streaming, dan tools AI.">
+    <meta property="og:image" content="1000024524.jpg"> <!-- Pastikan nama file gambar sesuai -->
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Ikon (Preloaded untuk performa) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { light: '#fdf4ff', primary: '#d946ef', dark: '#701a75', accent: '#fbcfe8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: theme('colors.brand.light'); color: theme('colors.brand.dark'); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pb-24 font-sans">
+
+    <!-- Header & Maskot -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 rounded-b-3xl">
+        <div class="max-w-md mx-auto px-4 py-4 text-center relative">
+            
+            <!-- Tombol Keranjang -->
+            <div class="absolute top-4 right-4 z-50">
+                <button aria-label="Buka Keranjang" id="btnOpenCart" class="w-10 h-10 bg-brand-light rounded-full shadow-sm border border-brand-accent flex items-center justify-center text-brand-primary relative hover:bg-brand-primary hover:text-white transition-colors">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden border border-white">0</span>
+                </button>
+            </div>
+
+            <!-- Identitas Toko -->
+            <img src="1000024524.jpg" alt="Logo Kamasylvia" class="w-24 h-24 mx-auto rounded-full border-4 border-brand-accent shadow-lg mb-2 object-cover">
+            <h1 class="text-2xl font-bold text-brand-primary">Kamasylvia Digital</h1>
+            <p class="text-xs text-gray-500 mt-1">Aplikasi Premium & Kebutuhan Digital</p>
+            
+            <!-- Live Search -->
+            <div class="mt-4 relative">
+                <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+                <input type="text" id="searchInput" aria-label="Cari aplikasi" placeholder="Cari aplikasi..." class="w-full bg-brand-light pl-11 pr-4 py-2.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all">
+            </div>
+
+            <!-- Tab Kategori -->
+            <div class="flex gap-2 overflow-x-auto hide-scroll mt-4 pb-2" id="categoryContainer">
+                <!-- Kategori di-*generate* otomatis oleh JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Grid Produk -->
+    <main class="max-w-md mx-auto px-4 mt-6">
+        <div id="productGrid" class="grid grid-cols-2 gap-4">
+            <!-- Produk di-*generate* otomatis oleh JS -->
+        </div>
+        
+        <!-- Pesan Saat Produk Tidak Ditemukan -->
+        <div id="emptyState" class="hidden text-center mt-10">
+            <i class="fas fa-box-open text-4xl text-gray-300 mb-3"></i>
+            <p class="text-sm text-gray-500">Waduh, produknya belum ada nih...</p>
+            <a href="#" id="btnRequestWA" target="_blank" class="inline-block mt-4 text-sm bg-white border border-brand-primary text-brand-primary px-4 py-2 rounded-full font-medium shadow-sm">Request ke Admin</a>
+        </div>
+    </main>
+
+    <!-- Modal Varian Paket -->
+    <div id="variantModal" class="fixed inset-0 bg-black/50 z-50 hidden flex-col justify-end" aria-hidden="true">
+        <div class="bg-white rounded-t-3xl p-5 w-full max-w-md mx-auto transform translate-y-full transition-transform duration-300" id="variantContent">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-brand-dark" id="variantTitle">Pilih Paket</h3>
+                <button aria-label="Tutup Pilihan Paket" id="btnCloseVariant" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="variantList" class="space-y-3 mb-6 max-h-60 overflow-y-auto hide-scroll">
+                <!-- Varian di-*generate* oleh JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Keranjang Belanja -->
+    <div id="cartModal" class="fixed inset-0 bg-black/50 z-50 hidden flex-col justify-end" aria-hidden="true">
+        <div class="bg-white rounded-t-3xl p-5 w-full max-w-md mx-auto transform translate-y-full transition-transform duration-300 flex flex-col max-h-[80vh]" id="cartContent">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-brand-dark">Keranjang Belanja</h3>
+                <button aria-label="Tutup Keranjang" id="btnCloseCart" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <div id="cartList" class="flex-1 overflow-y-auto space-y-3 mb-4 hide-scroll">
+                <!-- Isi keranjang di-*generate* oleh JS -->
+            </div>
+
+            <div class="border-t border-gray-100 pt-4 mt-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-sm text-gray-500 font-medium">Total Tagihan:</span>
+                    <span id="cartTotal" class="font-bold text-xl text-brand-primary">Rp 0</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <button id="btnCheckoutWA" class="w-full bg-[#25D366] text-white py-2.5 rounded-xl font-bold shadow-md shadow-green-500/30 flex items-center justify-center gap-2 text-sm transition-transform active:scale-95">
+                        <i class="fab fa-whatsapp text-lg"></i> WhatsApp
+                    </button>
+                    <button id="btnCheckoutTG" class="w-full bg-[#0088cc] text-white py-2.5 rounded-xl font-bold shadow-md shadow-blue-500/30 flex items-center justify-center gap-2 text-sm transition-transform active:scale-95">
+                        <i class="fab fa-telegram-plane text-lg"></i> Telegram
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PUSAT JAVASCRIPT: LOGIKA & DATA -->
+    <script>
+        /** ==========================================
+         *  PENGATURAN TOKO (EDIT DI BAGIAN INI SAJA)
+         *  ========================================== */
+        const CONFIG = {
+            kontak: {
+                whatsapp: "6281398696281",
+                telegram: "reklawis"
+            },
+            kategori: ["Semua", "Streaming", "AI Tools", "Musik", "Games"],
+            produk: [
+                { id: 1, name: "Netflix Premium", category: "Streaming", icon: "fa-film", variants: [
+                    { name: "Sharing 1 Hari", price: 5000 },
+                    { name: "Sharing 1 Minggu", price: 20000 },
+                    { name: "Private 1 Bulan", price: 55000 }
+                ]},
+                { id: 2, name: "Spotify Premium", category: "Musik", icon: "fa-music", variants: [
+                    { name: "Plan 1 Bulan", price: 15000 },
+                    { name: "Plan 3 Bulan", price: 40000 }
+                ]},
+                { id: 3, name: "Canva Pro", category: "AI Tools", icon: "fa-palette", variants: [
+                    { name: "Edu 1 Bulan", price: 8000 },
+                    { name: "Edu 1 Tahun", price: 25000 }
+                ]},
+                { id: 4, name: "Disney+ Hotstar", category: "Streaming", icon: "fa-tv", variants: [
+                    { name: "Sharing 1 Bulan", price: 22000 }
+                ]}
+            ]
+        };
+
+        /** ==========================================
+         *  SISTEM APLIKASI (JANGAN DIUBAH)
+         *  ========================================== */
+        let state = {
+            activeCategory: "Semua",
+            searchQuery: "",
+            cart: [],
+            selectedProduct: null
+        };
+
+        // --- Inisialisasi Kategori ---
+        function initCategories() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = CONFIG.kategori.map(cat => `
+                <button onclick="setCategory('${cat}')" 
+                        class="cat-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${cat === 'Semua' ? 'bg-brand-primary text-white font-medium shadow-sm' : 'bg-white text-gray-600 border border-brand-accent'}" 
+                        data-cat="${cat}">
+                    ${cat}
+                </button>
+            `).join('');
+            
+            // Set link request WA default
+            document.getElementById('btnRequestWA').href = `https://wa.me/${CONFIG.kontak.whatsapp}?text=Halo%20min,%20mau%20request%20aplikasi...`;
+        }
+
+        // --- Render Produk ---
+        function renderProducts() {
+            const grid = document.getElementById("productGrid");
+            const emptyState = document.getElementById("emptyState");
+            grid.innerHTML = "";
+            
+            const filtered = CONFIG.produk.filter(p => {
+                const matchCat = state.activeCategory === "Semua" || p.category === state.activeCategory;
+                const matchSearch = p.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.classList.add("hidden");
+                emptyState.classList.remove("hidden");
+            } else {
+                grid.classList.remove("hidden");
+                emptyState.classList.add("hidden");
+                
+                grid.innerHTML = filtered.map(p => {
+                    const minPrice = Math.min(...p.variants.map(v => v.price));
+                    return `
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-accent/50 text-center relative flex flex-col justify-between">
+                            <div>
+                                <div class="w-12 h-12 mx-auto bg-brand-light rounded-full flex items-center justify-center mb-3">
+                                    <i class="fas ${p.icon} text-xl text-brand-primary"></i>
+                                </div>
+                                <h3 class="font-bold text-sm text-gray-800 mb-1 leading-tight">${p.name}</h3>
+                                <p class="text-[11px] text-gray-400 mb-3">Mulai Rp ${minPrice.toLocaleString('id-ID')}</p>
+                            </div>
+                            <button onclick="openVariantModal(${p.id})" class="w-full bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-colors text-xs font-bold py-2 rounded-xl">
+                                <i class="fas fa-plus mr-1"></i> Paket
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // --- Interaksi Pencarian & Kategori ---
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+            state.searchQuery = e.target.value;
+            renderProducts();
+        });
+
+        window.setCategory = (cat) => {
+            state.activeCategory = cat;
+            document.querySelectorAll(".cat-btn").forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = "cat-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all bg-brand-primary text-white font-medium shadow-sm";
+                } else {
+                    btn.className = "cat-btn px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all bg-white text-gray-600 border border-brand-accent";
+                }
+            });
+            renderProducts();
+        };
+
+        // --- Modal Varian ---
+        window.openVariantModal = (productId) => {
+            const product = CONFIG.produk.find(p => p.id === productId);
+            if(!product) return;
+            state.selectedProduct = product;
+            
+            document.getElementById("variantTitle").innerText = product.name;
+            document.getElementById("variantList").innerHTML = product.variants.map((v, index) => `
+                <div class="flex justify-between items-center p-3 border border-gray-100 rounded-xl hover:border-brand-primary transition-colors cursor-pointer group" onclick="addToCart(${index})">
+                    <div>
+                        <p class="text-sm font-bold text-gray-800">${v.name}</p>
+                        <p class="text-xs text-brand-primary font-medium">Rp ${v.price.toLocaleString('id-ID')}</p>
+                    </div>
+                    <div class="bg-brand-primary/10 text-brand-primary w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                        <i class="fas fa-cart-plus text-sm"></i>
+                    </div>
+                </div>
+            `).join('');
+
+            const modal = document.getElementById("variantModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            setTimeout(() => document.getElementById("variantContent").classList.remove("translate-y-full"), 10);
+        };
+
+        const closeVariantModal = () => {
+            document.getElementById("variantContent").classList.add("translate-y-full");
+            setTimeout(() => {
+                const modal = document.getElementById("variantModal");
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }, 300);
+        };
+        document.getElementById("btnCloseVariant").addEventListener("click", closeVariantModal);
+
+        // --- Sistem Keranjang ---
+        window.addToCart = (variantIndex) => {
+            const variant = state.selectedProduct.variants[variantIndex];
+            state.cart.push({
+                productName: state.selectedProduct.name,
+                variantName: variant.name,
+                price: variant.price
+            });
+            updateCartBadge();
+            closeVariantModal();
+            
+            const badge = document.getElementById("cartBadge");
+            badge.classList.add("scale-125");
+            setTimeout(() => badge.classList.remove("scale-125"), 200);
+        };
+
+        function updateCartBadge() {
+            const badge = document.getElementById("cartBadge");
+            if (state.cart.length > 0) {
+                badge.innerText = state.cart.length;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        const renderCartItems = () => {
+            const list = document.getElementById("cartList");
+            let total = 0;
+
+            if (state.cart.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-10">
+                        <i class="fas fa-shopping-basket text-4xl text-gray-200 mb-3"></i>
+                        <p class="text-gray-500 text-sm">Keranjang kamu masih kosong nih...</p>
+                    </div>`;
+            } else {
+                list.innerHTML = state.cart.map((item, index) => {
+                    total += item.price;
+                    return `
+                        <div class="flex justify-between items-center p-3 border border-gray-100 rounded-xl bg-gray-50">
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">${item.productName}</p>
+                                <p class="text-[11px] text-gray-500 mb-1">${item.variantName}</p>
+                                <p class="text-xs text-brand-primary font-bold">Rp ${item.price.toLocaleString('id-ID')}</p>
+                            </div>
+                            <button onclick="removeFromCart(${index})" class="text-red-400 p-2 hover:bg-red-50 rounded-lg transition-colors">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+            document.getElementById("cartTotal").innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        };
+
+        window.removeFromCart = (index) => {
+            state.cart.splice(index, 1);
+            updateCartBadge();
+            renderCartItems();
+        };
+
+        // --- Buka/Tutup Modal Keranjang ---
+        document.getElementById("btnOpenCart").addEventListener("click", () => {
+            renderCartItems();
+            const modal = document.getElementById("cartModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            setTimeout(() => document.getElementById("cartContent").classList.remove("translate-y-full"), 10);
+        });
+
+        const closeCartModal = () => {
+            document.getElementById("cartContent").classList.add("translate-y-full");
+            setTimeout(() => {
+                const modal = document.getElementById("cartModal");
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }, 300);
+        };
+        document.getElementById("btnCloseCart").addEventListener("click", closeCartModal);
+
+        // --- Checkout Logika ---
+        function buildOrderText() {
+            let text = "Halo Admin Kamasylvia Digital! 🌸
+
+Saya mau order pesanan berikut:
+";
+            let total = 0;
+            state.cart.forEach((item, i) => {
+                text += `
+${i + 1}. *${item.productName}*
+   Paket: ${item.variantName}
+   Harga: Rp ${item.price.toLocaleString('id-ID')}
+`;
+                total += item.price;
+            });
+            text += `
+*Total Tagihan: Rp ${total.toLocaleString('id-ID')}*
+
+Apakah stoknya masih ada?`;
+            return text;
+        }
+
+        document.getElementById("btnCheckoutWA").addEventListener("click", () => {
+            if (state.cart.length === 0) return alert("Keranjang masih kosong!");
+            window.open(`https://wa.me/${CONFIG.kontak.whatsapp}?text=${encodeURIComponent(buildOrderText())}`, '_blank');
+        });
+
+        document.getElementById("btnCheckoutTG").addEventListener("click", () => {
+            if (state.cart.length === 0) return alert("Keranjang masih kosong!");
+            window.open(`https://t.me/${CONFIG.kontak.telegram}?text=${encodeURIComponent(buildOrderText())}`, '_blank');
+        });
+
+        // --- Jalankan Saat Halaman Dimuat ---
+        initCategories();
+        renderProducts();
+    </script>
+</body>
+</html>
